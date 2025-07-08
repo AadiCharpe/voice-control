@@ -1,5 +1,6 @@
 from vosk import Model, KaldiRecognizer
 import pyaudio
+import pyautogui
 import json
 
 # Load model
@@ -22,6 +23,7 @@ try:
             text = result.get("text", "")
             if text:
                 print(f"Recognized: '{text}'")
+                pyautogui.write(text + ' ')
 except KeyboardInterrupt:
     print("Stopping...")
 finally:

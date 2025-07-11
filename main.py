@@ -15,6 +15,8 @@ stream.start_stream()
 
 print("Listening... (Press Ctrl+C to stop)")
 
+actionKeys = ['left', 'right', 'up', 'down', 'control', 'shift', 'alternate', 'enter', 'backspace', 'escape', 'tab']
+
 try:
     while True:
         data = stream.read(4096, exception_on_overflow=False)
@@ -22,9 +24,21 @@ try:
             result = json.loads(recognizer.Result())
             text = result.get("text", "")
             if text:
+                text = text.replace('back space', 'backspace')
                 print(f"Recognized: '{text}'")
-                pyautogui.write(text + ' ')
-except KeyboardInterrupt:
+                prev = ''
+                for word in text.split(' '):
+                    if word in actionKeys and prev != 'word':
+                        if word == 'control':
+                            word = 'ctrl'
+                        elif word == 'escape':
+                            word = 'esc'
+                        elif word == 'alternate':
+                            word = 'alt'
+                        pyautogui.press(word)
+                    else:
+                        pyautogui.write(word + ' ')
+                    prev = word
     print("Stopping...")
 finally:
     stream.stop_stream()
